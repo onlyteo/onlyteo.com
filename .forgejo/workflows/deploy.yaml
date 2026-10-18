@@ -35,8 +35,16 @@ jobs:
         with:
           node-version: 26
 
-      - name: Install and Build
-        run: npm ci && npm run build
+      - name: Install Node dependencies
+        run: |
+            [[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true
+
+      - name: Build with Hugo
+        run: |
+            hugo \
+            --gc \
+            --minify \
+            --baseURL "https://onlyteo.com/"
 
       - name: Deploy to Codeberg Pages
         uses: https://codeberg.org/git-pages/action@v2
@@ -44,4 +52,4 @@ jobs:
           site: https://onlyteo.com/
           server: codeberg.page
           token: ${{ forge.token }}
-          source: dist/
+          source: public/
